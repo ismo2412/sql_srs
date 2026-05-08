@@ -41,4 +41,4 @@ if query:
         st.dataframe(result)
 
     except Exception as e:
-        st.error(f"Erreur SQL : {e}")
+        st.error(f"Erreur code SQL : {e}")
