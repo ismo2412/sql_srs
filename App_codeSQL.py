@@ -6,7 +6,7 @@ import duckdb
 data = {
     "categorie": ["X", "X", "Y", "Y", "Y"],
     "a": [1, 2, 3, 4, 5],
-    "b": [10, 20, 30, 40, 50]
+    "b": [10, 20, 30, 40, 50],
 }
 df = pd.DataFrame(data)
 
@@ -31,21 +31,23 @@ with st.sidebar:
                 AVG(b) AS moyenne_b
             FROM data_source
             GROUP BY categorie
-        """
+        """,
     }
 
     selected_query = st.selectbox("Requêtes exemples", list(queries.keys()))
 
-    # 👇 Aperçu des données dans la sidebar
+    # Aperçu des données
     st.subheader("📊 Données")
     st.dataframe(df)
 
-    # 👇 Schéma
+    # Schéma
     st.subheader("🧱 Schéma")
-    schema_df = pd.DataFrame({
-        "colonne": df.columns,
-        "type": df.dtypes.astype(str)
-    })
+    schema_df = pd.DataFrame(
+        {
+            "colonne": df.columns,
+            "type": df.dtypes.astype(str),
+        }
+    )
     st.table(schema_df)
 
 # Valeur par défaut
@@ -54,7 +56,6 @@ default_query = queries[selected_query]
 # Zone principale
 st.title("🧠 Explorateur SQL avec DuckDB")
 
-# 👇 Affichage de la table principale
 st.subheader("📂 Table utilisée : data_source")
 st.dataframe(df)
 
@@ -65,7 +66,7 @@ if query:
     st.code(query, language="sql")
 
     try:
-        # Petite sécurité
+        # Sécurité basique
         if "drop" in query.lower() or "delete" in query.lower():
             st.error("Requête non autorisée 🚫")
         else:
@@ -74,5 +75,32 @@ if query:
             st.subheader("📊 Résultat")
             st.dataframe(result)
 
+            # Comparaison
+            st.subheader("🆚 Comparaison avec les données source")
+
+            try:
+                # Colonnes communes
+                common_cols = list(set(df.columns).intersection(result.columns))
+
+                if common_cols:
+                    df_base = df[common_cols].reset_index(drop=True)
+                    df_res = result[common_cols].reset_index(drop=True)
+
+                    # Vérifier taille identique
+                    if df_base.shape == df_res.shape:
+                        comparison = df_base.compare(df_res)
+
+                        if comparison.empty:
+                            st.success("✅ Aucune différence trouvée")
+                        else:
+                            st.dataframe(comparison)
+                    else:
+                        st.info("ℹ️ Impossible de comparer : tailles différentes")
+                else:
+                    st.info("ℹ️ Aucune colonne commune pour comparaison")
+
+            except Exception as e:
+                st.warning(f"Erreur lors de la comparaison : {e}")
+
     except Exception as e:
-        st.error(f"Erreur code SQL : {e}")
+        st.error(f"Erreur SQL : {e}")
