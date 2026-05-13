@@ -2,9 +2,9 @@
 Application Streamlit pour explorer des données avec DuckDB
 et exécuter des requêtes SQL interactives.
 """
-import streamlit as st
-import pandas as pd
 import duckdb
+import pandas as pd
+import streamlit as st
 
 # Données exemple
 data = {
