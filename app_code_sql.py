@@ -2,6 +2,7 @@
 Application Streamlit pour explorer des données avec DuckDB
 et exécuter des requêtes SQL interactives.
 """
+
 import duckdb
 import pandas as pd
 import streamlit as st
@@ -105,7 +106,6 @@ if query:
 
             except Exception as e:  # pylint: disable=broad-exception-caught
                 st.warning(f"Erreur lors de la comparaison : {e}")
-
 
     except Exception as e:  # pylint: disable=broad-exception-caught
         st.error(f"Erreur SQL : {e}")
