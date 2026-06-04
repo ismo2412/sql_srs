@@ -23,6 +23,7 @@ data = {
 memory_state_df = pd.DataFrame(data)
 #print(memory_state_df.columns)
 #print(memory_state_df)
+conn.execute("DROP TABLE IF EXISTS memory_state")
 conn.execute(
     "CREATE OR REPLACE TABLE memory_state AS SELECT * FROM memory_state_df"
 )
